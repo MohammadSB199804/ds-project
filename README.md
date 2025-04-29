@@ -72,8 +72,7 @@ Or create a new PostgreSQL user with appropriate roles.
 * Reset the auto-increment sequence for IDs:
   - ALTER SEQUENCE messages_id_seq RESTART WITH 1;
 * Return the AVG of latency, MIN, and MAX
-SELECT
-    COUNT(*) AS total_messages,
+  - SELECT COUNT(*) AS total_messages,
     AVG(latency_in_millis) AS average_latency_ms,
     MIN(latency_in_millis) AS min_latency_ms,
     MAX(latency_in_millis) AS max_latency_ms

@@ -1,83 +1,52 @@
-# ds-project
-Distributed Sytems Course Project - SWEN7303
+# Distributed Systems Course Project (RabbitMQ + Java + PostgreSQL)
 
-DS Project Setup Instructions [RabbitMQ Project]
+This project is a Distributed Systems demonstration using **RabbitMQ**, **Spring Boot**, and **PostgreSQL**.  
+We've prepared everything using **Docker** so you don't need to install anything complicated — just follow the steps below and you'll be able to run the project and test it in your browser.
 
-📋 Prerequisites
+---
 
-- Install Maven (to build and run Spring Boot projects).
-- Install RabbitMQ.
-- Install PostgreSQL.
+## What You Need First
 
-🛠️ Setup Steps
+### Step 1: Install Docker Desktop
 
-1. Install and Start RabbitMQ
-Install RabbitMQ on your local machine.
+If Docker is not already installed on your computer:
 
-* Start RabbitMQ server:
-  -rabbitmq-server
-OR: 
-  -brew services start rabbitmq
+1. Go to: https://www.docker.com/products/docker-desktop/
+2. Click **Download for Windows** (or Mac if you're using a Mac).
+3. Install Docker by following the instructions.
+4. After installation, open **Docker Desktop**.
+5. Wait until Docker says "**Docker is running**" (you can see this in the taskbar tray).
 
-* Verify that RabbitMQ service is running:
-  -brew services list
-  
-* Check if RabbitMQ is listening on the default port (5672):
-  -sudo lsof -i :5672
-  
-* Open RabbitMQ Management UI in your browser:
-  -http://localhost:15672/
-    Username: guest
-    Password: guest
-  
-2. Install and Start PostgreSQL
-Install PostgreSQL database.
+---
 
-* Start PostgreSQL service:
-  -brew services start postgresql@15
-    Note:
-    If needed, you can stop PostgreSQL with:
-  -brew services stop postgresql@15
+## How to Run the Project
 
-🚀 Running the Projects
+Once Docker is running:
 
-3. Run the Producer Project
-Navigate to the producer project directory.
+### Step 2: Download the Project
 
-* Run the producer using Maven:
-  - ./mvnw spring-boot:run
+1. Download this project folder to your computer.
+2. Make sure the folder contains:
+   - `docker-compose.yml`
+   - `rabbitMQ/producer/`
+   - `rabbitMQ/consumer/`
 
-4. Send Messages
-Once the producer is running, open your browser and trigger sending messages:
-http://localhost:8080/send-messages?count=300000
-Replace 300000 with the number of transactions you want to send.
+### Step 3: Open the Folder in Terminal
 
+1. Press `Shift` + right-click inside the folder.
+2. Choose **“Open PowerShell window here”** or **“Open in Terminal”**.
+3. Then run this command:
 
-🧠 Important Notes for Consumer Project
-Ensure that database username and password in the consumer project match your PostgreSQL setup.
-You can either:
-Use the default postgres superuser.
-Or create a new PostgreSQL user with appropriate roles.
+```bash
+docker-compose up --build
+```
 
+### Step 4: Use 
 
-🗄️ PostgreSQL Useful Commands
-* Connect to PostgreSQL as the default user:
-  -psql -U postgres
-* Connect to a specific database :
-  - psql -U postgres -d your_database_name
-* Connect using a specific database owner:
-  - psql -U owner_username -d your_database_name
-* Clear all rows from a table:
-  - TRUNCATE TABLE your_table_name;
-* Reset the auto-increment sequence for IDs:
-  - ALTER SEQUENCE messages_id_seq RESTART WITH 1;
-* Return the AVG of latency, MIN, and MAX
-  - SELECT COUNT(*) AS total_messages,
-    AVG(latency_in_millis) AS average_latency_ms,
-    MIN(latency_in_millis) AS min_latency_ms,
-    MAX(latency_in_millis) AS max_latency_ms
-FROM messages;
+1. Press `Shift` + right-click inside the folder.
+2. Choose **“Open PowerShell window here”** or **“Open in Terminal”**.
+3. Then run this command:
 
--------------------------------------------------------------------------------------------------
-
-
+```bash
+docker-compose up --build
+```

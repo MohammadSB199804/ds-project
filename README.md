@@ -31,7 +31,7 @@ Once Docker is running:
    - `rabbitMQ/producer/`
    - `rabbitMQ/consumer/`
 
-### Step 3: Open the Folder in Terminal
+### Step 3: Open the Folder in Terminal (message-brokers)
 
 1. Press `Shift` + right-click inside the folder.
 2. Choose **“Open PowerShell window here”** or **“Open in Terminal”**.

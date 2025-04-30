@@ -1,6 +1,7 @@
 package com.example.kafka.producer.services;
 
 import com.example.kafka.producer.models.MessagePayload;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Async;
@@ -9,7 +10,10 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 @Service
 public class MessagePublisher {
@@ -24,19 +28,22 @@ public class MessagePublisher {
     }
 
     @Async
-    public void publishMessages(int count) {
+    @SneakyThrows
+    public void publishMessages(int count){
         System.out.println("🚀 Starting to publish " + count + " messages to Kafka...");
 
         Instant start = Instant.now();
+        var listFutures = new CompletableFuture[count];
+
 
         for (int i = 0; i < count; i++) {
             MessagePayload payload = generateMessage(i);
-            kafkaTemplate.send(topic, payload);
-
+            listFutures[i]= (kafkaTemplate.send(topic, payload));
             if (i % 1000 == 0 && i != 0) {
                 System.out.println(i + " messages sent...");
             }
         }
+        CompletableFuture.allOf(listFutures).get();
 
         /*Capture end time after all messages are sent.
         Calculate the duration it took.*/

@@ -1,0 +1,39 @@
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+
+  postgres:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ds_project
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  producer:
+    build:
+      context: ./rabbitMQ/producer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - rabbitmq
+
+  consumer:
+    build:
+      context: ./rabbitMQ/consumer
+    depends_on:
+      - rabbitmq
+      - postgres
+
+volumes:
+  pgdata:

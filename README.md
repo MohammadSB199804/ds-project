@@ -80,4 +80,31 @@ FROM messages;
 
 -------------------------------------------------------------------------------------------------
 
+DS Project Setup Instructions [Kafka Project]
+
+📋 Prerequisites
+
+- Install Offset Explorer (Tool for kAFKA UI).
+- Install Kafka.
+- Install PostgreSQL.
+
+🛠️ Setup Steps
+
+1. Start the services using Docker:
+  - docker-compose up -d
+2. Run Kafka UI in a separate container:
+  - docker run -d \
+      -p 8090:8080 \
+      -e KAFKA_CLUSTERS_0_NAME=local \
+      -e KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=localhost:9092 \
+      provectuslabs/kafka-ui
+
+🛑 To Stop Kafka Services:
+
+1. Stop all running containers:
+  - docker stop $(docker ps -aq)
+2. Take down the Docker Compose environment:
+  - docker-compose down
+3. Remove all stopped containers:
+  - docker rm $(docker ps -aq)
 

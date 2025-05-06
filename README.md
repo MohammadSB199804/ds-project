@@ -18,6 +18,10 @@ Install RabbitMQ on your local machine.
   -rabbitmq-server
 OR: 
   -brew services start rabbitmq
+OR:
+- docker run -d --hostname rabbitmq-host --name rabbitmq \
+-p 5672:5672 -p 15672:15672 \
+rabbitmq:management
 
 * Verify that RabbitMQ service is running:
   -brew services list

@@ -1,7 +1,10 @@
 package com.example.producer.services;
 
 import com.example.producer.models.MessagePayload;
+import com.example.producer.services.helpers.Helpers;
+import lombok.SneakyThrows;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -11,6 +14,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class MessagePublisher {
@@ -23,12 +27,17 @@ public class MessagePublisher {
     @Value("${rabbitmq.routingkey}")
     private String routingKey;
 
+    @Autowired
+    private Helpers helpers;
     public MessagePublisher(RabbitTemplate rabbitTemplate) {
         this.rabbitTemplate = rabbitTemplate;
     }
 
     @Async
+    @SneakyThrows
     public void publishMessages(int count) {
+        var listFutures = new CompletableFuture[count];
+
         /*
         * Important:
           @Async means this method will run in background, in a separate thread.
@@ -44,13 +53,15 @@ public class MessagePublisher {
         * */
         for (int i = 0; i < count; i++) {
             MessagePayload payload = generateMessage(i);
-            rabbitTemplate.convertAndSend(exchange, routingKey, payload);
+            listFutures[i]= helpers.sendAsync(exchange, routingKey, payload);
 
             // Optional: small logging for big tests
             if (i % 10000 == 0 && i != 0) {
                 System.out.println(i + " messages sent...");
             }
         }
+        CompletableFuture.allOf(listFutures).get();
+
         /*Capture end time after all messages are sent.
         Calculate the duration it took.*/
         Instant end = Instant.now();

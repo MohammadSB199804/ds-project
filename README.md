@@ -3,6 +3,124 @@ Distributed Sytems Course Project - SWEN7303
 
 DS Project Setup Instructions [RabbitMQ Project]
 
+# 🟦 Distributed Messaging System: Producer & Consumer with RabbitMQ & PostgreSQL (Dockerized)
+
+This project demonstrates a **fully containerized distributed system** where:
+
+- A **Spring Boot Producer** sends messages asynchronously to a **RabbitMQ queue**
+- A **Spring Boot Consumer** listens on the queue and saves received messages into a **PostgreSQL** database
+- All components are containerized via Docker and communicate over a custom network
+
+---
+
+## 🏗️ Architecture
+
+```text
++----------+        +-----------+        +------------+         +-------------+
+| Producer | -----> | RabbitMQ  | -----> | Consumer   | ----->  | PostgreSQL  |
++----------+        +-----------+        +------------+         +-------------+
+    8080              5672/15672              8081                  5432
+
+🚀 How to Run the Entire System
+
+1️⃣ Create Docker Network
+- docker network create ds-network
+
+2️⃣ Start RabbitMQ
+- docker run -d --hostname rabbit-host \
+  --network ds-network \
+  --name rabbitmq \
+  -p 5672:5672 -p 15672:15672 \
+  rabbitmq:management
+
+- 📌 Access RabbitMQ Management UI:
+http://localhost:15672
+Default Login: guest / guest
+
+3️⃣ Start PostgreSQL
+- docker run -d \
+  --network ds-network \
+  --name postgres \
+  -e POSTGRES_USER=macbook \
+  -e POSTGRES_PASSWORD=guest \
+  -e POSTGRES_DB=consumerdb \
+  -p 5432:5432 \
+  postgres
+
+4️⃣ Build and Run Producer App
+- docker build -t producer-app .
+docker run -d \
+  --network ds-network \
+  --name producer \
+  -p 8080:8080 \
+  producer-app
+
+5️⃣ Build and Run Consumer App
+- docker build -t consumer-app .
+docker run -d \
+  --network ds-network \
+  --name consumer \
+  -p 8081:8081 \
+  consumer-app
+
+6️⃣ Trigger Message Sending
+- curl "http://localhost:8080/send-messages?count=10"
+✅ You should see:
+Messages published in Producer logs
+Messages consumed & inserted into DB in Consumer logs
+
+🗃️ Check Stored Messages
+- Log into PostgreSQL:
+docker exec -it postgres psql -U macbook -d consumerdb
+Then run:
+SELECT * FROM messages;
+
+❌ How to Stop and Clean Everything
+🔻 Stop all containers:
+- docker stop producer consumer rabbitmq postgres
+🧹 Remove all containers:
+- docker rm producer consumer rabbitmq postgres
+❌ Delete Docker network:
+- docker network rm ds-network
+*******************************************************************************************************
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*******************************************************************************************************
 📋 Prerequisites
 
 - Install Maven (to build and run Spring Boot projects).

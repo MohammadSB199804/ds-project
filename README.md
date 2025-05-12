@@ -69,7 +69,7 @@ This project demonstrates a **fully containerized distributed system** where:
     curl "http://localhost:8080/send-messages?count=10"
     ✅ You should see:
         Messages published in Producer logs
-        Messages consumed & inserted into DB in Consumer logs
+        Messages consumed & inserted into DB in Consumer logs --> to see logs user : docker logs producer
 
 🗃️ Check Stored Messages
     Log into PostgreSQL:

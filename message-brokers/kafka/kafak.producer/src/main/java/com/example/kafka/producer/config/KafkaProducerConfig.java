@@ -1,6 +1,7 @@
 package com.example.kafka.producer.config;
 
 import com.example.kafka.producer.models.MessagePayload;
+import jakarta.annotation.PostConstruct;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,6 +20,13 @@ public class KafkaProducerConfig {
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
+
+    @PostConstruct
+    public void printBootstrapServers() {
+        System.out.println("📡 Kafka bootstrap servers: " + bootstrapServers);
+    }
+
+
 
     @Bean
     public ProducerFactory<String, MessagePayload> producerFactory() {

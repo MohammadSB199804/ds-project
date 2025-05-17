@@ -88,7 +88,18 @@ This project demonstrates a **fully containerized distributed system** where:
         docker network rm ds-network
 *******************************************************************************************************
 
+DS Project Setup Instructions [Kafka Project]
 
+1️⃣ Run containerized kafka producer : 
+
+# Stop and clean everything
+docker compose down -v
+
+# Rebuild the producer (since app.properties changed)
+docker compose build kafka-producer
+
+# Start everything again
+docker compose up -d
 
 
 

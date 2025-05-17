@@ -103,6 +103,8 @@ docker compose up -d
 
 
 
+#Run postgress to check data
+docker exec -it postgres psql -U macbook -d consumerdb
 
 
 

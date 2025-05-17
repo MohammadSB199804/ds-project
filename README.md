@@ -90,16 +90,19 @@ This project demonstrates a **fully containerized distributed system** where:
 
 DS Project Setup Instructions [Kafka Project]
 
-1️⃣ Run containerized kafka producer : 
+1️⃣ Run containerized kafka producer and consumer : 
 
-# Stop and clean everything
-docker compose down -v
+docker-compose down -v
+docker-compose build
+docker-compose up --remove-orphans
 
-# Rebuild the producer (since app.properties changed)
-docker compose build kafka-producer
 
-# Start everything again
-docker compose up -d
+#Run postgress to check data
+docker exec -it postgres psql -U macbook -d consumerdb
+SELECT * FROM messages;
+TRUNCATE TABLE messages;
+SELECT COUNT(*) FROM messages;
+
 
 
 

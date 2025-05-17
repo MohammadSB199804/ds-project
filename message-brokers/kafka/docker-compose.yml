@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
@@ -15,6 +16,7 @@ services:
     ports:
       - "9092:9092"
       - "29092:29092"
+
     environment:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
@@ -25,14 +27,39 @@ services:
     networks:
       - kafka-net
 
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    environment:
+      POSTGRES_DB: consumerdb
+      POSTGRES_USER: macbook
+      POSTGRES_PASSWORD: guest
+    ports:
+      - "5432:5432"
+    networks:
+      - kafka-net
+
+
   kafka-producer:
     build:
-      context: .
+      context: ./kafak.producer
     container_name: kafka-producer
     depends_on:
       - kafka
     ports:
       - "8083:8083"
+    networks:
+      - kafka-net
+
+  kafka-consumer:
+    build:
+      context: ./consumer
+    container_name: kafka-consumer
+    depends_on:
+      - kafka
+      - postgres
+    ports:
+      - "8084:8084"
     networks:
       - kafka-net
 

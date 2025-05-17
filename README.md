@@ -105,6 +105,10 @@ docker compose up -d
 
 #Run postgress to check data
 docker exec -it postgres psql -U macbook -d consumerdb
+SELECT * FROM messages;
+TRUNCATE TABLE messages;
+SELECT COUNT(*) FROM messages;
+
 
 
 

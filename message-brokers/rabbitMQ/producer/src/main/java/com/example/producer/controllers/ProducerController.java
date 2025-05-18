@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ProducerController {
-//This class is a REST Controller: it listens to HTTP requests.
+
     private final MessagePublisher messagePublisher;
 
     public ProducerController(MessagePublisher messagePublisher) {
@@ -15,12 +15,11 @@ public class ProducerController {
     }
 
     @GetMapping("/send-messages")
-    public String sendMessages(@RequestParam(defaultValue = "100000") int count) {
-        /*
-        * Exposes an HTTP GET API /send-messages.
-        * Accepts a query parameter count (default 100000 messages).
-        * */
-        messagePublisher.publishMessages(count);
-        return "🚀 Sending " + count + " messages asynchronously! Check the logs for performance metrics.";
+    public String sendMessages(
+            @RequestParam(defaultValue = "100000") int count,
+            @RequestParam(defaultValue = "1024") int size // in bytes
+    ) {
+        messagePublisher.publishMessages(count, size);
+        return "🚀 Sending " + count + " messages (~" + size + " bytes each) asynchronously! Check logs for metrics.";
     }
 }

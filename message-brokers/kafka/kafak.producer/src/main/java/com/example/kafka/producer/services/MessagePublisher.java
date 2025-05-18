@@ -7,13 +7,12 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 @Service
 public class MessagePublisher {
@@ -29,40 +28,42 @@ public class MessagePublisher {
 
     @Async
     @SneakyThrows
-    public void publishMessages(int count){
+    public void publishMessages(int count, int messageSizeInBytes) {
         System.out.println("🚀 Starting to publish " + count + " messages to Kafka...");
 
         Instant start = Instant.now();
-        var listFutures = new CompletableFuture[count];
+        CompletableFuture<?>[] futures = new CompletableFuture[count];
 
+        String baseContent = generatePayloadContent(messageSizeInBytes);
 
         for (int i = 0; i < count; i++) {
-            MessagePayload payload = generateMessage(i);
-            listFutures[i]= (kafkaTemplate.send(topic, payload));
+            MessagePayload payload = new MessagePayload(
+                    UUID.randomUUID().toString(),
+                    baseContent,
+                    Instant.now().truncatedTo(ChronoUnit.MILLIS).toString()
+            );
+
+            futures[i] = kafkaTemplate.send(topic, payload);
             if (i % 1000 == 0 && i != 0) {
-                System.out.println(i + " messages sent...");
+                System.out.println("📦 Sent: " + i + " messages");
             }
         }
-        CompletableFuture.allOf(listFutures).get();
 
-        /*Capture end time after all messages are sent.
-        Calculate the duration it took.*/
-        Instant end = Instant.now();
-        Duration timeElapsed = Duration.between(start, end);
-        //Throughput: How many messages per second your producer achieved.
-        double seconds = timeElapsed.toMillis() / 1000.0;
-        double throughput = count / seconds;
+        CompletableFuture.allOf(futures).get();
+
+        double timeInSeconds = Duration.between(start, Instant.now()).toMillis() / 1000.0;
+        double throughput = count / timeInSeconds;
 
         System.out.println("✅ Finished sending " + count + " messages.");
-        System.out.println("⏱️ Total Time: " + seconds + " seconds");
-        System.out.println("📈 Throughput: " + throughput + " messages/second");
+        System.out.println("⏱️ Time: " + timeInSeconds + " seconds");
+        System.out.println("📈 Throughput: " + throughput + " messages/sec");
     }
 
-    private MessagePayload generateMessage(int index) {
-        return new MessagePayload(
-                UUID.randomUUID().toString(),
-                "Kafka message #" + index,
-                Instant.now().truncatedTo(ChronoUnit.MILLIS).toString()
-        );
+    private String generatePayloadContent(int sizeInBytes) {
+        byte[] bytes = new byte[sizeInBytes];
+        for (int i = 0; i < bytes.length; i++) {
+            bytes[i] = 'A';
+        }
+        return new String(bytes, StandardCharsets.UTF_8);
     }
 }

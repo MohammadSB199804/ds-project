@@ -1,7 +1,6 @@
 package com.example.kafka.producer.config;
 
 import com.example.kafka.producer.models.MessagePayload;
-import jakarta.annotation.PostConstruct;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +11,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
+import jakarta.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,11 +22,9 @@ public class KafkaProducerConfig {
     private String bootstrapServers;
 
     @PostConstruct
-    public void printBootstrapServers() {
-        System.out.println("📡 Kafka bootstrap servers: " + bootstrapServers);
+    public void printKafkaServers() {
+        System.out.println("🟢 Kafka bootstrap servers: " + bootstrapServers);
     }
-
-
 
     @Bean
     public ProducerFactory<String, MessagePayload> producerFactory() {
@@ -34,6 +32,11 @@ public class KafkaProducerConfig {
         configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+
+        // ✅ Add these for large messages
+        configProps.put(ProducerConfig.MAX_REQUEST_SIZE_CONFIG, 104857600); // 100MB
+        configProps.put(ProducerConfig.BUFFER_MEMORY_CONFIG, 134217728);   // 128MB
+
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 

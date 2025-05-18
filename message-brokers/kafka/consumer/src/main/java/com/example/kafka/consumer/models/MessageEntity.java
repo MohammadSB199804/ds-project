@@ -10,10 +10,13 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class MessageEntity {
+
     @Id
     private String messageId;
 
+    @Column(columnDefinition = "TEXT") // ✅ Allows large content
     private String messageContent;
+
     private String sendTimestamp;
     private String receiveTimestamp;
     private long latencyInMillis;

@@ -14,11 +14,16 @@ public class MessageEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // Auto-increment primary key
+    private Long id;  // Auto-increment primary key
 
-    private String messageId;    // UUID from producer
-    private String messageContent; // The actual message content
-    private String sendTimestamp;  // When producer sent
+    private String messageId;        // UUID from producer
+
+    @Column(columnDefinition = "TEXT")  // ✅ Supports large message sizes (up to 1GB in PostgreSQL)
+    private String messageContent;   // Actual message content
+
+    private String sendTimestamp;    // When producer sent
+
     private String receiveTimestamp; // When consumer received
-    private long latencyInMillis; // Calculated latency in milliseconds
+
+    private long latencyInMillis;    // Calculated latency in ms
 }

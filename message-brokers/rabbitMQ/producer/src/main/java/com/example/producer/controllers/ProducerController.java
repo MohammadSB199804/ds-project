@@ -16,10 +16,10 @@ public class ProducerController {
 
     @GetMapping("/send-messages")
     public String sendMessages(
-            @RequestParam(defaultValue = "100000") int count,
-            @RequestParam(defaultValue = "1024") int size // in bytes
+            @RequestParam(defaultValue = "1") int count,
+            @RequestParam(defaultValue = "1024") int size
     ) {
         messagePublisher.publishMessages(count, size);
-        return "🚀 Sending " + count + " messages (~" + size + " bytes each) asynchronously! Check logs for metrics.";
+        return "🚀 Sending " + count + " messages (~" + size + " bytes each) asynchronously! Check logs for details.";
     }
 }

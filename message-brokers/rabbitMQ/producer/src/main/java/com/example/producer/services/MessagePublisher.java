@@ -31,14 +31,15 @@ public class MessagePublisher {
 
     @Async
     public void publishMessages(int count, int desiredMessageSizeBytes) {
-        System.out.println("🔁 Starting to publish " + count + " messages of ~" + desiredMessageSizeBytes + " bytes each...");
+        System.out.println("🔁 Publishing " + count + " messages (~" + formatBytes(desiredMessageSizeBytes) + " each)");
 
         Instant start = Instant.now();
 
         for (int i = 0; i < count; i++) {
             MessagePayload payload = generateMessage(i, desiredMessageSizeBytes);
             int actualSize = getMessageSizeBytes(payload);
-            System.out.println("📦 Message #" + i + " size: " + actualSize + " bytes");
+
+            System.out.println("📦 Message #" + i + " actual size: " + formatBytes(actualSize));
 
             rabbitTemplate.convertAndSend(exchange, routingKey, payload);
         }
@@ -47,8 +48,8 @@ public class MessagePublisher {
         double seconds = Duration.between(start, end).toMillis() / 1000.0;
         double throughput = count / seconds;
 
-        System.out.println("✅ Done sending " + count + " messages.");
-        System.out.println("⏱️ Total time: " + seconds + " seconds");
+        System.out.println("✅ Finished sending " + count + " messages.");
+        System.out.println("⏱️ Time taken: " + seconds + " seconds");
         System.out.println("📈 Throughput: " + throughput + " messages/second");
     }
 
@@ -77,5 +78,13 @@ public class MessagePublisher {
             e.printStackTrace();
             return -1;
         }
+    }
+
+    private String formatBytes(int bytes) {
+        if (bytes >= 1024 * 1024)
+            return String.format("%.2f MB", bytes / 1048576.0);
+        if (bytes >= 1024)
+            return String.format("%.2f KB", bytes / 1024.0);
+        return bytes + " B";
     }
 }

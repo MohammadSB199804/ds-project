@@ -98,163 +98,76 @@ To stop and remove containers. Add -v to remove volumes too (e.g., if you want a
 
 *******************************************************************************************************
 
-DS Project Setup Instructions [Kafka Project]
+Kafka Distributed System Project - Detailed Execution Steps
 
-1️⃣ Run containerized kafka producer and consumer : 
+✅ Step 1: Make sure your folder structure is like this:
 
-docker-compose down -v
-docker-compose build
-docker-compose up --remove-orphans
+message-brokers/
+├── kafka/
+│   ├── docker-compose.yml
+│   ├── kafak.producer/
+│   └── consumer/
 
+✅ Step 2: Build Docker Images for Producer & Consumer
 
-#Run postgress to check data
-docker exec -it postgres psql -U macbook -d consumerdb
-SELECT * FROM messages;
-TRUNCATE TABLE messages;
-SELECT COUNT(*) FROM messages;
+Open a terminal and navigate to the kafka folder:
 
+    - docker-compose build
 
+This builds:
 
+* kafka-producer from ./kafak.producer
+* kafka-consumer from ./consumer
 
+✅ Step 3: Start the System
 
+Run the full system (Kafka + Zookeeper + PostgreSQL + Producer + Consumer):
 
+    - docker-compose up
 
+This will start all services and attach logs to your terminal.
 
+If you want to run it in background mode:
 
+    - docker-compose up -d
 
+✅ Step 4: Send Messages from Producer
 
+Use your browser or Postman to hit the following endpoints:
 
+🔹 Send 10 messages of 1MB:
 
+    - http://localhost:8083/send-messages?count=10&sizeKB=1024
 
+✅ Step 5: Clean Up
 
+To shut everything down:
 
+  - docker-compose down -v
 
+To stop containers but keep them reusable:
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-*******************************************************************************************************
-📋 Prerequisites
-
-- Install Maven (to build and run Spring Boot projects).
-- Install RabbitMQ.
-- Install PostgreSQL.
-
-🛠️ Setup Steps
-
-1. Install and Start RabbitMQ
-Install RabbitMQ on your local machine.
-
-* Start RabbitMQ server:
-  -rabbitmq-server
-OR: 
-  -brew services start rabbitmq
-OR:
-- docker run -d --hostname rabbitmq-host --name rabbitmq \
--p 5672:5672 -p 15672:15672 \
-rabbitmq:management
-
-* Verify that RabbitMQ service is running:
-  -brew services list
-  
-* Check if RabbitMQ is listening on the default port (5672):
-  -sudo lsof -i :5672
-  
-* Open RabbitMQ Management UI in your browser:
-  -http://localhost:15672/
-    Username: guest
-    Password: guest
-  
-2. Install and Start PostgreSQL
-Install PostgreSQL database.
-
-* Start PostgreSQL service:
-  -brew services start postgresql@15
-    Note:
-    If needed, you can stop PostgreSQL with:
-  -brew services stop postgresql@15
-
-🚀 Running the Projects
-
-3. Run the Producer Project
-Navigate to the producer project directory.
-
-* Run the producer using Maven:
-  - ./mvnw spring-boot:run
-
-4. Send Messages
-Once the producer is running, open your browser and trigger sending messages:
-http://localhost:8080/send-messages?count=300000
-Replace 300000 with the number of transactions you want to send.
+    - docker-compose stop
 
 
-🧠 Important Notes for Consumer Project
-Ensure that database username and password in the consumer project match your PostgreSQL setup.
-You can either:
-Use the default postgres superuser.
-Or create a new PostgreSQL user with appropriate roles.
+#Run postgress to check data :
 
+* docker exec -it postgres psql -U macbook -d consumerdb
 
-🗄️ PostgreSQL Useful Commands
-* Connect to PostgreSQL as the default user:
-  -psql -U postgres
-* Connect to a specific database :
-  - psql -U postgres -d your_database_name
-* Connect using a specific database owner:
-  - psql -U owner_username -d your_database_name
-* Clear all rows from a table:
-  - TRUNCATE TABLE your_table_name;
+* SELECT * FROM messages;
+
+* TRUNCATE TABLE messages;
+
+* SELECT COUNT(*) FROM messages;
+
 * Reset the auto-increment sequence for IDs:
+
   - ALTER SEQUENCE messages_id_seq RESTART WITH 1;
+
 * Return the AVG of latency, MIN, and MAX
+
   - SELECT COUNT(*) AS total_messages,
     AVG(latency_in_millis) AS average_latency_ms,
     MIN(latency_in_millis) AS min_latency_ms,
     MAX(latency_in_millis) AS max_latency_ms
 FROM messages;
-
--------------------------------------------------------------------------------------------------
-
-DS Project Setup Instructions [Kafka Project]
-
-📋 Prerequisites
-
-- Install Offset Explorer (Tool for kAFKA UI).
-- Install Kafka.
-- Install PostgreSQL.
-
-🛠️ Setup Steps
-
-1. Start the services using Docker:
-  - docker-compose up -d
-2. Run Kafka UI in a separate container:
-  - docker run -d \
-      -p 8090:8080 \
-      -e KAFKA_CLUSTERS_0_NAME=local \
-      -e KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=localhost:9092 \
-      provectuslabs/kafka-ui
-
-🛑 To Stop Kafka Services:
-
-1. Stop all running containers:
-  - docker stop $(docker ps -aq)
-2. Take down the Docker Compose environment:
-  - docker-compose down
-3. Remove all stopped containers:
-  - docker rm $(docker ps -aq)
-

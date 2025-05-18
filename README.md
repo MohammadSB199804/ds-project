@@ -23,69 +23,79 @@ This project demonstrates a **fully containerized distributed system** where:
 
 🚀 How to Run the Entire System
 
-1️⃣ Create Docker Network
-    docker network create ds-network
+✅ Prerequisites
+- Docker & Docker Compose installed
+- Java 17+ (locally for debugging, optional if you're only using Docker)
+- Maven installed (optional if building locally)
+- Ports 8080, 8081, 5432, 5672, and 15672 must be free
 
-2️⃣ Start RabbitMQ
-    docker run -d --hostname rabbit-host \
-      --network ds-network \
-      --name rabbitmq \
-      -p 5672:5672 -p 15672:15672 \
-      rabbitmq:management
+ds-project/
+│
+└── message-brokers/
+    └── rabbitMQ/
+        ├── producer/
+        ├── consumer/
+        ├── docker-compose.yaml
+        └── rabbitmq.conf  <-- sets frame_max to 100MB
 
-    📌 Access RabbitMQ Management UI:
+🐳 Step 1: Build Producer & Consumer Docker Images
+
+From the root of the rabbitMQ/ folder:
+
+    - docker-compose build
+
+This will:
+
+* Build the producer and consumer using your Dockerfiles
+* Set JVM heap size to 2GB (-Xmx2G) to handle large messages
+* Cache dependencies for faster builds
+
+🐇 Step 2: Start All Services
+
+Run everything using Docker Compose:
+    
+    - docker-compose up
+
+This will:
+
+* Start RabbitMQ (with frame_max set to 100MB)
+* Start PostgreSQL (consumerdb)
+* Start producer and consumer apps (Spring Boot)
+
+✅ You should see logs from RabbitMQ, producer, and consumer in your terminal.
+
+📤 Step 3: Send Large Messages
+
+Use curl or Postman to hit the producer’s REST API.
+
+Example to send 10MB messages:
+
+    - curl "http://localhost:8080/send-messages?count=1&size=10485760"
+
+This sends:
+
+* count=1 message
+* size=10485760 = 10MB payload
+
+ 📌 Access RabbitMQ Management UI:
         http://localhost:15672
         Default Login: guest / guest
 
-3️⃣ Start PostgreSQL
-    docker run -d \
-      --network ds-network \
-      --name postgres \
-      -e POSTGRES_USER=macbook \
-      -e POSTGRES_PASSWORD=guest \
-      -e POSTGRES_DB=consumerdb \
-      -p 5432:5432 \
-      postgres
+📦 Data Storage
 
-4️⃣ Build and Run Producer App
-    docker build -t producer-app .
+Messages are stored in PostgreSQL in the messages table, with full content and latency.
+You can connect to the database using any tool like DBeaver, psql, or PgAdmin.
 
-    docker run -d \
-      --network ds-network \
-      --name producer \
-      -p 8080:8080 \
-      producer-app
+🛑 Stopping Everything
 
-5️⃣ Build and Run Consumer App
-    docker build -t consumer-app .
+When done:
 
-    docker run -d \
-      --network ds-network \
-      --name consumer \
-      -p 8081:8081 \
-      consumer-app
+    - docker-compose down
 
-6️⃣ Trigger Message Sending
-    curl "http://localhost:8080/send-messages?count=10"
-    ✅ You should see:
-        Messages published in Producer logs
-        Messages consumed & inserted into DB in Consumer logs --> to see logs user : docker logs producer
+To stop and remove containers. Add -v to remove volumes too (e.g., if you want a fresh DB):
 
-🗃️ Check Stored Messages
-    Log into PostgreSQL:
-        docker exec -it postgres psql -U macbook -d consumerdb
-    Then run:
-        SELECT * FROM messages;
+    - docker-compose down -v
 
-❌ How to Stop and Clean Everything
-    🔻 Stop all containers:
-        docker stop producer consumer rabbitmq postgres
-
-    🧹 Remove all containers:
-        docker rm producer consumer rabbitmq postgres
-
-    ❌ Delete Docker network:
-        docker network rm ds-network
 *******************************************************************************************************
 
 DS Project Setup Instructions [Kafka Project]

@@ -137,7 +137,7 @@ Use your browser or Postman to hit the following endpoints:
 
 🔹 Send 10 messages of 1MB:
 
-    - http://localhost:8083/send-messages?count=10&sizeKB=1024
+    - http://localhost:8083/send-messages?count=10&size=1048576
 
 ✅ Step 5: Clean Up
 

@@ -98,7 +98,7 @@ To stop and remove containers. Add -v to remove volumes too (e.g., if you want a
 
 *******************************************************************************************************
 
-Kafka Distributed System Project - Detailed Execution Steps
+# 🟦 Distributed Messaging System: Producer & Consumer with Kafka & PostgreSQL (Dockerized)
 
 ✅ Step 1: Make sure your folder structure is like this:
 

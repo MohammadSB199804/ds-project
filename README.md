@@ -12,16 +12,16 @@ This project demonstrates a **fully containerized distributed system** where:
 - All components are containerized via Docker and communicate over a custom network
 
 ---
-
-# 🟦 Distributed Messaging System: Producer & Consumer with RabbitMQ & PostgreSQL (Dockerized)
-
 ## 🏗️ Architecture
 
 ```text
+# 🟦 Distributed Messaging System: Producer & Consumer with RabbitMQ & PostgreSQL (Dockerized)
+
 +----------+        +-----------+        +------------+         +-------------+
 | Producer | -----> | RabbitMQ  | -----> | Consumer   | ----->  | PostgreSQL  |
 +----------+        +-----------+        +------------+         +-------------+
     8080              5672/15672              8081                  5432
+
 
 🚀 How to Run the Entire System
 

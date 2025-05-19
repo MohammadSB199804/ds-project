@@ -13,6 +13,8 @@ This project demonstrates a **fully containerized distributed system** where:
 
 ---
 
+# 🟦 Distributed Messaging System: Producer & Consumer with RabbitMQ & PostgreSQL (Dockerized)
+
 ## 🏗️ Architecture
 
 ```text
@@ -22,8 +24,6 @@ This project demonstrates a **fully containerized distributed system** where:
     8080              5672/15672              8081                  5432
 
 🚀 How to Run the Entire System
-
-# 🟦 Distributed Messaging System: Producer & Consumer with RabbitMQ & PostgreSQL (Dockerized)
 
 ✅ Prerequisites
 - Docker & Docker Compose installed

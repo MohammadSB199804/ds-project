@@ -3,7 +3,7 @@ Distributed Sytems Course Project - SWEN7303
 
 DS Project Setup Instructions [RabbitMQ Project]
 
-# 🟦 Distributed Messaging System: Producer & Consumer with RabbitMQ & PostgreSQL (Dockerized)
+# 🟦 Distributed Messaging System: Producer & Consumer with [RabbitMQ, Kafka & PostgreSQL] (Dockerized)
 
 This project demonstrates a **fully containerized distributed system** where:
 
@@ -22,6 +22,8 @@ This project demonstrates a **fully containerized distributed system** where:
     8080              5672/15672              8081                  5432
 
 🚀 How to Run the Entire System
+
+# 🟦 Distributed Messaging System: Producer & Consumer with RabbitMQ & PostgreSQL (Dockerized)
 
 ✅ Prerequisites
 - Docker & Docker Compose installed

@@ -10,8 +10,9 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 COPY --from=builder /app/target/*.jar app.jar
 
-# Set heap size to handle large messages (up to 100MB)
-ENV JAVA_OPTS="-Xmx2G"
+# Increase heap size for large Kafka messages (adjust as needed)
+ENV JAVA_OPTS="-Xms2G -Xmx2G"
 
 EXPOSE 8084
+
 ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]

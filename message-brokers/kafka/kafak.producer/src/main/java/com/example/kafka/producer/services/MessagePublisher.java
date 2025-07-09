@@ -12,6 +12,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
@@ -34,7 +36,9 @@ public class MessagePublisher {
         System.out.println("🔁 Publishing " + count + " messages (~" + formatBytes(desiredMessageSizeBytes) + " each)");
 
         Instant start = Instant.now();
-        CompletableFuture<?>[] futures = new CompletableFuture[count];
+
+        int batchSize = 500; // Tune this based on memory availability
+        List<CompletableFuture<?>> batch = new ArrayList<>(batchSize);
 
         for (int i = 0; i < count; i++) {
             MessagePayload payload = generateMessage(i, desiredMessageSizeBytes);
@@ -42,10 +46,18 @@ public class MessagePublisher {
 
             System.out.println("📦 Message #" + i + " actual size: " + formatBytes(actualSize));
 
-            futures[i] = kafkaTemplate.send(topic, payload);
+            batch.add(kafkaTemplate.send(topic, payload));
+
+            if (batch.size() >= batchSize) {
+                CompletableFuture.allOf(batch.toArray(new CompletableFuture[0])).get();
+                batch.clear();
+            }
         }
 
-        CompletableFuture.allOf(futures).get();
+        // Flush remaining
+        if (!batch.isEmpty()) {
+            CompletableFuture.allOf(batch.toArray(new CompletableFuture[0])).get();
+        }
 
         Instant end = Instant.now();
         double seconds = Duration.between(start, end).toMillis() / 1000.0;
